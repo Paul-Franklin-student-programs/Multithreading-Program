@@ -1,28 +1,34 @@
 import java.util.concurrent.locks.ReentrantLock;
 
 public class IncrementingClass {
-    static int counter = 0;
+    static int count = 0;
     public static final ReentrantLock lock = new ReentrantLock();
-    static void countToTwenty(){
+
+    static void countToTwenty() {
         lock.lock();
         try {
             for (int i = 0; i <= 20; i++) {
-                counter++;
+                count++;
             }
-        }finally{lock.unlock();
+        } finally {
+            lock.unlock();
+        }
     }
 }
-class DriverClass{
+
+class DriverClass {
     public static void main(String[] args) throws InterruptedException {
         Thread t2 = new Thread(IncrementingClass::countToTwenty);
         t2.start();
         try {
             IncrementingClass.lock.lock();
             for (int p = 0; p <= 20; p++) {
-                IncrementingClass.counter--;
+                IncrementingClass.count--;
             }
-        }finally{IncrementingClass.lock.unlock();}
+        } finally {
+            IncrementingClass.lock.unlock();
+        }
         t2.join();
-        System.out.println
+        System.out.println("Final value of \"count\" variable: " + IncrementingClass.count);
+        }
     }
-}
