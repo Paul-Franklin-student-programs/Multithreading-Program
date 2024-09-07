@@ -7,7 +7,7 @@ public class IncrementingClass {
     static void countToTwenty() {
         lock.lock();
         try {
-            for (int i = 0; i <= 20; i++) {
+            for (int i = 0; i < 20; i++) {
                 count++;
             }
         } finally {
@@ -20,15 +20,17 @@ class DriverClass {
     public static void main(String[] args) throws InterruptedException {
         Thread t2 = new Thread(IncrementingClass::countToTwenty);
         t2.start();
-        try {
-            IncrementingClass.lock.lock();
-            for (int p = 0; p <= 20; p++) {
-                IncrementingClass.count--;
+        {
+            try {
+                IncrementingClass.lock.lock();
+                for (int p = 0; p < 20; p++) {
+                    IncrementingClass.count--;
+                }
+            } finally {
+                IncrementingClass.lock.unlock();
             }
-        } finally {
-            IncrementingClass.lock.unlock();
         }
         t2.join();
         System.out.println("Final value of \"count\" variable: " + IncrementingClass.count);
-        }
     }
+}
